@@ -1,5 +1,6 @@
 package com.team.indexpulseapi;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -11,7 +12,10 @@ public class UserAccount {
     private String id;
     private String email;
     private String password;
+    //We just specify the JSON property in camelCase attributes:
+    @JsonProperty("first_name")
     private String firstName;
+    @JsonProperty("last_name")
     private String lastName;
 
     public UserAccount() {
