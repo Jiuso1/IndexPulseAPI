@@ -1,5 +1,7 @@
-package com.team.indexpulseapi;
+package com.team.indexpulseapi.controller;
 
+import com.team.indexpulseapi.entity.UserAccount;
+import com.team.indexpulseapi.repository.UserAccountRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user_accounts")
@@ -35,7 +38,11 @@ public class UserAccountsController {
 
     @PostMapping("/register")
     UserAccount postUserAccountRegister(@RequestBody UserAccount userAccount) {
-        return userAccountRepository.save(userAccount);
+        UserAccount userAccountReturned = null;//Account to return.
+        if (userAccountRepository.findByEmail(userAccount.getEmail()).isEmpty()) {//If there isn't an account with the same email:
+            userAccountReturned = userAccountRepository.save(userAccount);//The account is saved.
+        }
+        return userAccountReturned;//The account is returned.
     }
 
     @PostMapping("/login")
@@ -49,8 +56,6 @@ public class UserAccountsController {
             UserAccount userAccountIterated = userAccountArrayList.get(i);
             if (userAccountIterated.getEmail().equals(userAccount.getEmail())) {
                 if (userAccountIterated.getPassword().equals(userAccount.getPassword())) {
-                    System.out.println(userAccount.getEmail() + " " + userAccountIterated.getEmail());
-                    System.out.println(userAccount.getPassword() + " " + userAccountIterated.getPassword());
                     login = true;//If we have found an account, we authorize login.
                 }
             }
