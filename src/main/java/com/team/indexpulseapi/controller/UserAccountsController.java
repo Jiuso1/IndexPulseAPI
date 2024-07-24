@@ -19,11 +19,7 @@ public class UserAccountsController {
     public UserAccountsController(UserAccountRepository userAccountRepository) {
         this.userAccountRepository = userAccountRepository;
 
-        this.userAccountRepository.saveAll(List.of(
-                new UserAccount("test1@gmail.com", "test1", "Test", "One"),
-                new UserAccount("test2@gmail.com", "test2", "Test", "Two"),
-                new UserAccount("test3@gmail.com", "test3", "Test", "Three")
-        ));
+        this.userAccountRepository.saveAll(List.of(new UserAccount("test1@gmail.com", "test1", "Test", "One"), new UserAccount("test2@gmail.com", "test2", "Test", "Two"), new UserAccount("test3@gmail.com", "test3", "Test", "Three")));
     }
 
     @GetMapping
@@ -46,23 +42,23 @@ public class UserAccountsController {
     }
 
     @PostMapping("/login")
-    Boolean postUserAccountLogin(@RequestBody UserAccount userAccount) {
-        ArrayList<UserAccount> userAccountArrayList = userAccountRepository.findAll();
-        Boolean login = false;
+    String postUserAccountLogin(@RequestBody UserAccount userAccount) {
+        String id = "";//ID of the account if successfully logged in. It values "" otherwise.
         int i = 0;
+        ArrayList<UserAccount> userAccountArrayList = userAccountRepository.findAll();//ArrayList of all user accounts registered.
 
         //We search an account with the same email and password:
-        while (!login && i < userAccountArrayList.size()) {
+        while (id.isEmpty() && i < userAccountArrayList.size()) {
             UserAccount userAccountIterated = userAccountArrayList.get(i);
             if (userAccountIterated.getEmail().equals(userAccount.getEmail())) {
                 if (userAccountIterated.getPassword().equals(userAccount.getPassword())) {
-                    login = true;//If we have found an account, we authorize login.
+                    id = userAccountIterated.getId();//If we have found an account, we get its id.
                 }
             }
             i++;
         }
 
-        return login;
+        return id;
     }
 
     @DeleteMapping("/{id}")
@@ -71,12 +67,8 @@ public class UserAccountsController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<UserAccount> putUserAccount(@PathVariable String id,
-                                               @RequestBody UserAccount userAccount) {
-        return (!userAccountRepository.existsById(id))
-                ? new ResponseEntity<>(userAccountRepository.save(userAccount),
-                HttpStatus.CREATED)
-                : new ResponseEntity<>(userAccountRepository.save(userAccount), HttpStatus.OK);
+    ResponseEntity<UserAccount> putUserAccount(@PathVariable String id, @RequestBody UserAccount userAccount) {
+        return (!userAccountRepository.existsById(id)) ? new ResponseEntity<>(userAccountRepository.save(userAccount), HttpStatus.CREATED) : new ResponseEntity<>(userAccountRepository.save(userAccount), HttpStatus.OK);
     }
 
 }
