@@ -67,8 +67,14 @@ public class UserAccountsController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<UserAccount> putUserAccount(@PathVariable String id, @RequestBody UserAccount userAccount) {
-        return (!userAccountRepository.existsById(id)) ? new ResponseEntity<>(userAccountRepository.save(userAccount), HttpStatus.CREATED) : new ResponseEntity<>(userAccountRepository.save(userAccount), HttpStatus.OK);
+    UserAccount putUserAccount(@PathVariable String id, @RequestBody UserAccount userAccount) {
+        UserAccount userAccountReturned = null;
+        if(!userAccountRepository.findById(id).isEmpty()) {
+            //The API call its own functions:
+            deleteUserAccount(id);//Firstly it deletes the account with old data.
+            userAccountReturned = postUserAccountRegister(userAccount);//And then it creates the account with new data.
+        }
+        return userAccountReturned;
     }
 
 }
