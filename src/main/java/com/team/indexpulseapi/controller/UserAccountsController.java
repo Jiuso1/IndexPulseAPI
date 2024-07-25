@@ -2,14 +2,11 @@ package com.team.indexpulseapi.controller;
 
 import com.team.indexpulseapi.entity.UserAccount;
 import com.team.indexpulseapi.repository.UserAccountRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/user_accounts")
@@ -18,7 +15,6 @@ public class UserAccountsController {
 
     public UserAccountsController(UserAccountRepository userAccountRepository) {
         this.userAccountRepository = userAccountRepository;
-
         this.userAccountRepository.saveAll(List.of(new UserAccount("test1@gmail.com", "test1", "Test", "One"), new UserAccount("test2@gmail.com", "test2", "Test", "Two"), new UserAccount("test3@gmail.com", "test3", "Test", "Three")));
     }
 
@@ -34,7 +30,7 @@ public class UserAccountsController {
 
     @PostMapping("/register")
     UserAccount postUserAccountRegister(@RequestBody UserAccount userAccount) {
-        UserAccount userAccountReturned = null;//Account to return.
+        UserAccount userAccountReturned = null;//User account to return.
         if (userAccountRepository.findByEmail(userAccount.getEmail()).isEmpty()) {//If there isn't an account with the same email:
             userAccountReturned = userAccountRepository.save(userAccount);//The account is saved.
         }
@@ -68,13 +64,17 @@ public class UserAccountsController {
 
     @PutMapping("/{id}")
     UserAccount putUserAccount(@PathVariable String id, @RequestBody UserAccount userAccount) {
-        UserAccount userAccountReturned = null;
-        if(!userAccountRepository.findById(id).isEmpty()) {
-            //The API call its own functions:
-            deleteUserAccount(id);//Firstly it deletes the account with old data.
-            userAccountReturned = postUserAccountRegister(userAccount);//And then it creates the account with new data.
+        UserAccount userAccountReturned = null;//User account to return.
+        if(!userAccountRepository.findById(id).isEmpty()) {//If we have found the same account by id:
+            userAccountReturned = userAccountRepository.findById(id).get();//We get the account.
+            //We set the new values that come with userAccount:
+            userAccountReturned.setEmail(userAccount.getEmail());
+            userAccountReturned.setPassword(userAccount.getPassword());
+            userAccountReturned.setFirstName(userAccount.getFirstName());
+            userAccountReturned.setLastName(userAccount.getLastName());
+            userAccountRepository.save(userAccountReturned);//The account is updated in the repository. When we save an account with same id, it just updates the values.
         }
-        return userAccountReturned;
+        return userAccountReturned;//The account is returned.
     }
 
 }
