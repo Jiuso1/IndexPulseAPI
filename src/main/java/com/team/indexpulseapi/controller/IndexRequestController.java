@@ -4,6 +4,7 @@ import com.team.indexpulseapi.entity.IndexRequest;
 import com.team.indexpulseapi.repository.IndexRequestRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +23,9 @@ public class IndexRequestController {
         return indexRequestRepository.findAll();
     }
 
-    @GetMapping("/{id}")
-    Optional<IndexRequest> getIndexRequestsById(@PathVariable String id) {
-        return indexRequestRepository.findById(id);
+    @GetMapping("/{userAccountId}")
+    ArrayList<IndexRequest> getIndexRequestsByUserAccountId(@PathVariable String userAccountId) {
+        return indexRequestRepository.findByUserAccountId(userAccountId);
     }
 
     @PostMapping("/register")

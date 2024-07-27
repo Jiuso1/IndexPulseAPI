@@ -11,4 +11,6 @@ public interface IndexRequestRepository extends CrudRepository<IndexRequest, Str
     ArrayList<IndexRequest> findAll();
     @Query("SELECT i FROM IndexRequest i WHERE i.url = :url")
     ArrayList<IndexRequest> findByUrl(String url);
+    @Query("SELECT i FROM IndexRequest i WHERE i.userAccountId = :userAccountId")
+    ArrayList<IndexRequest> findByUserAccountId(String userAccountId);
 }
