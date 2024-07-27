@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/index_requests")
@@ -30,11 +29,30 @@ public class IndexRequestController {
 
     @PostMapping("/register")
     IndexRequest postIndexRequestRegister(@RequestBody IndexRequest indexRequest) {
-        IndexRequest indexRequestReturned = null;//Index request to return.
-        if (indexRequestRepository.findByUrl(indexRequest.getUrl()).isEmpty()) {//If there isn't an index request with the same url:
-            indexRequestReturned = indexRequestRepository.save(indexRequest);//The index request is saved.
+        String userAccountId = indexRequest.getUserAccountId();//ID of the user account that created this index request.
+        ArrayList<IndexRequest> indexRequestArrayList = indexRequestRepository.findByUserAccountId(userAccountId);//We get all index requests created by this user account.
+
+        IndexRequest indexRequestIterated = null;//Index request variable used to iterate.
+        IndexRequest indexRequestReturned = null;//Index request variable used to return.
+
+        int i = 0;//Counter.
+        boolean found = false;//Values true when we've found a index request with same URL.
+
+        while (!found && i < indexRequestArrayList.size()) {//While we haven't found same URL and we haven't passed indexRequestArrayList limits:
+            indexRequestIterated = indexRequestArrayList.get(i);//Current index request to process is saved.
+            if (indexRequestIterated.getUrl().equals(indexRequest.getUrl())) {//If the URL is equal to that of the request to be added:
+                found = true;//Found!
+            }
+            i++;//We prepare the counter to check the next index request.
         }
-        return indexRequestReturned;//The account is returned.
+
+        if (found) {//If we found an index request with same URL:
+            indexRequestReturned = null;//We won't add indexRequest to the repository. We return null.
+        } else {
+            indexRequestReturned = indexRequestRepository.save(indexRequest);//The index request is saved. We return it.
+        }
+
+        return indexRequestReturned;//The value stored is returned.
     }
 
     @DeleteMapping("/{id}")

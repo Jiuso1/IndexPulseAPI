@@ -42,10 +42,11 @@ public class UserAccountsController {
         String id = "";//ID of the account if successfully logged in. It values "" otherwise.
         int i = 0;
         ArrayList<UserAccount> userAccountArrayList = userAccountRepository.findAll();//ArrayList of all user accounts registered.
+        UserAccount userAccountIterated = null;
 
         //We search an account with the same email and password:
         while (id.isEmpty() && i < userAccountArrayList.size()) {
-            UserAccount userAccountIterated = userAccountArrayList.get(i);
+            userAccountIterated = userAccountArrayList.get(i);
             if (userAccountIterated.getEmail().equals(userAccount.getEmail())) {
                 if (userAccountIterated.getPassword().equals(userAccount.getPassword())) {
                     id = userAccountIterated.getId();//If we have found an account, we get its id.
