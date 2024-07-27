@@ -36,7 +36,7 @@ public class IndexRequestController {
         IndexRequest indexRequestReturned = null;//Index request variable used to return.
 
         int i = 0;//Counter.
-        boolean found = false;//Values true when we've found a index request with same URL.
+        boolean found = false;//Values true when we've found an index request with same URL.
 
         while (!found && i < indexRequestArrayList.size()) {//While we haven't found same URL and we haven't passed indexRequestArrayList limits:
             indexRequestIterated = indexRequestArrayList.get(i);//Current index request to process is saved.
@@ -46,9 +46,7 @@ public class IndexRequestController {
             i++;//We prepare the counter to check the next index request.
         }
 
-        if (found) {//If we found an index request with same URL:
-            indexRequestReturned = null;//We won't add indexRequest to the repository. We return null.
-        } else {
+        if (!found) {//If we don't find an index request with same URL:
             indexRequestReturned = indexRequestRepository.save(indexRequest);//The index request is saved. We return it.
         }
 
