@@ -1,0 +1,10 @@
+package com.team.indexpulseapi.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/index_api")
+public class IndexApiController {
+
+}
