@@ -1,5 +1,5 @@
 package com.team.indexpulseapi.entity;
 
 public enum Status {
-    NOT_INDEXED, INDEXED
+    NOT_INDEXED, INDEXED, JSON_ERROR
 }

@@ -1,10 +1,15 @@
 package com.team.indexpulseapi.controller;
 
+import com.team.indexpulseapi.entity.IndexRequest;
+import com.team.indexpulseapi.entity.Status;
+import com.team.indexpulseapi.repository.IndexRequestRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 @RestController
@@ -12,9 +17,11 @@ import java.util.Scanner;
 public class IndexApiController {
 
     final boolean isWindows;//Values true when the service is run by a Windows OS.
+    private final IndexRequestRepository indexRequestRepository;//Index request shared repository.
 
-    IndexApiController() {
+    IndexApiController(IndexRequestRepository indexRequestRepository) {
         isWindows = System.getProperty("os.name").toLowerCase().contains("windows");//If the OS name contains windows, isWindows values true.
+        this.indexRequestRepository = indexRequestRepository;//The repository is received and shared with the rest of controllers.
     }
 
     @GetMapping("/test")
@@ -33,8 +40,29 @@ public class IndexApiController {
         }
     }
 
+    @GetMapping("/run")
+    public void getRun() {
+        String output = null;//Console output.
+        ArrayList<IndexRequest> indexRequestArrayList = indexRequestRepository.findByStatus(Status.NOT_INDEXED);//indexRequestArrayList gets all not indexed index requests.
+        IndexRequest indexRequestIterated = null;//Index request variable used to iterate.
+        String uploadDirectory = null;
+        File[] files = null;
+        int numberOfFiles = 0;//Current number of files in uploadDirectory.
+        for (int i = 0; i < indexRequestArrayList.size(); i++) {
+            indexRequestIterated = indexRequestArrayList.get(i);
+            uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();
+            //Files, while, launch command, process output...
+            System.out.println(indexRequestIterated.getUrl());
+        }
+        /*if (!isWindows) {//If OS isn't Windows:
+            //Linux code missing...
+        } else {//If OS is Windows:
+
+        }*/
+    }
+
     //Based on source: https://stackoverflow.com/questions/5711084/java-runtime-getruntime-getting-output-from-executing-a-command-line-program
-    public static String execCmd(String cmd) throws java.io.IOException {
+    public String execCmd(String cmd) throws java.io.IOException {
         String error = "";//Error output.
         String normal = "";//Normal output.
         String output = "";//Full output.
