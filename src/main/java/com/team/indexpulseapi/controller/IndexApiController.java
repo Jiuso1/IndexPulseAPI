@@ -27,12 +27,13 @@ public class IndexApiController {
     @GetMapping("/test")
     public void getTest() {
         String output = null;//Console output.
+        String command = "cmd.exe /c C:/Users/jesus/AppData/Roaming/npm/gis.cmd google.com " +
+                "--path C:/Users/jesus/Documents/Java/upwork/google-indexing-script/service_account.json";
         if (!isWindows) {//If OS isn't Windows:
             //Linux code missing...
         } else {//If OS is Windows:
             try {
-                output = execCmd("cmd.exe /c C:/Users/jesus/AppData/Roaming/npm/gis.cmd google.com " +
-                        "--path C:/Users/jesus/Documents/Java/upwork/google-indexing-script/service_account.json");//output values the console output of the given command.
+                output = execCmd(command);//output values the console output of the given command.
                 System.out.println(output);//We print output.
             } catch (IOException e) {//If there was an IOException:
                 System.out.println(e.getMessage());//We print the error message.
@@ -43,22 +44,52 @@ public class IndexApiController {
     @GetMapping("/run")
     public void getRun() {
         String output = null;//Console output.
+        String command = "";
         ArrayList<IndexRequest> indexRequestArrayList = indexRequestRepository.findByStatus(Status.NOT_INDEXED);//indexRequestArrayList gets all not indexed index requests.
         IndexRequest indexRequestIterated = null;//Index request variable used to iterate.
         String uploadDirectory = null;
         File[] files = null;
         int numberOfFiles = 0;//Current number of files in uploadDirectory.
+        boolean indexed = false;
+        String filePath = "";
+        int j = 0;
+
+        //Files, while, launch command, process output:
+
         for (int i = 0; i < indexRequestArrayList.size(); i++) {
             indexRequestIterated = indexRequestArrayList.get(i);
             uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();
-            //Files, while, launch command, process output...
-            System.out.println(indexRequestIterated.getUrl());
-        }
-        /*if (!isWindows) {//If OS isn't Windows:
-            //Linux code missing...
-        } else {//If OS is Windows:
+            files = new File(uploadDirectory).listFiles();
 
-        }*/
+            if (files == null) {
+                System.out.println("No files");
+            } else {
+                while (j < files.length && !indexed) {
+                    filePath = files[j].getAbsolutePath().replace('\\', '/');
+                    command = "cmd.exe /c C:/Users/jesus/AppData/Roaming/npm/gis.cmd " +
+                            indexRequestIterated.getUrl() + " " +
+                            "--path " +
+                            filePath;
+                    try {
+                        if (!isWindows) {//If OS isn't Windows:
+                            //Linux code missing...
+                        } else {//If OS is Windows:
+                            output = execCmd(command);//output values the console output of the given command.
+                        }
+                        System.out.println(command);
+                        System.out.println(output);//We print output.
+                        if (output.contains("Indexing requested successfully")) {
+                            indexed = true;
+                            indexRequestIterated.setStatus(Status.INDEXED);
+                        }
+                    } catch (IOException e) {//If there was an IOException:
+                        System.out.println(e.getMessage());//We print the error message.
+                    }
+                    j++;
+                }
+            }
+        }
+
     }
 
     //Based on source: https://stackoverflow.com/questions/5711084/java-runtime-getruntime-getting-output-from-executing-a-command-line-program

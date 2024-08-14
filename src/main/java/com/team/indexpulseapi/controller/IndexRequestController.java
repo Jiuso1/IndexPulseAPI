@@ -14,7 +14,7 @@ public class IndexRequestController {
 
     public IndexRequestController(IndexRequestRepository indexRequestRepository) {
         this.indexRequestRepository = indexRequestRepository;
-        this.indexRequestRepository.saveAll(List.of(new IndexRequest("https://duckduckgo.com/", "12"), new IndexRequest("https://amazon.com/", "12"), new IndexRequest("https://bing.com/", "14")));
+        //this.indexRequestRepository.saveAll(List.of(new IndexRequest("https://duckduckgo.com/", "12"), new IndexRequest("https://amazon.com/", "12"), new IndexRequest("https://bing.com/", "14")));
     }
 
     @GetMapping
