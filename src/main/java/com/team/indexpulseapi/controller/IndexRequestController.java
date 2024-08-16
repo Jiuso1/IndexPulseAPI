@@ -5,7 +5,6 @@ import com.team.indexpulseapi.repository.IndexRequestRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/index_requests")

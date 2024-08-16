@@ -20,7 +20,7 @@ public class IndexApiController {
     private final IndexRequestRepository indexRequestRepository;//Index request shared repository.
 
     IndexApiController(IndexRequestRepository indexRequestRepository) {
-        isWindows = System.getProperty("os.name").toLowerCase().contains("windows");//If the OS name contains windows, isWindows values true.
+        this.isWindows = System.getProperty("os.name").toLowerCase().contains("windows");//If the OS name contains windows, isWindows values true.
         this.indexRequestRepository = indexRequestRepository;//The repository is received and shared with the rest of controllers.
     }
 

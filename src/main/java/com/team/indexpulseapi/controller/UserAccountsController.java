@@ -66,7 +66,7 @@ public class UserAccountsController {
     @PutMapping("/{id}")
     UserAccount putUserAccount(@PathVariable String id, @RequestBody UserAccount userAccount) {
         UserAccount userAccountReturned = null;//User account to return.
-        if(!userAccountRepository.findById(id).isEmpty()) {//If we have found the same account by id:
+        if (!userAccountRepository.findById(id).isEmpty()) {//If we have found the same account by id:
             userAccountReturned = userAccountRepository.findById(id).get();//We get the account.
             //We set the new values that come with userAccount:
             userAccountReturned.setEmail(userAccount.getEmail());
