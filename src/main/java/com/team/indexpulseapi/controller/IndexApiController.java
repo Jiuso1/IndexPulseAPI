@@ -16,7 +16,7 @@ import java.util.Scanner;
 @RequestMapping("/index_api")
 public class IndexApiController {
 
-    final boolean isWindows;//Values true when the service is run by a Windows OS.
+    final boolean isWindows;//isWindows values true when the service is run by a Windows OS.
     private final IndexRequestRepository indexRequestRepository;//Index request shared repository.
 
     IndexApiController(IndexRequestRepository indexRequestRepository) {
@@ -44,52 +44,49 @@ public class IndexApiController {
     @GetMapping("/run")
     public void getRun() {
         String output = null;//Console output.
-        String command = "";
+        String command = "";//Command that CMD is going to run.
         ArrayList<IndexRequest> indexRequestArrayList = indexRequestRepository.findByStatus(Status.NOT_INDEXED);//indexRequestArrayList gets all not indexed index requests.
         IndexRequest indexRequestIterated = null;//Index request variable used to iterate.
-        String uploadDirectory = null;
-        File[] files = null;
+        String uploadDirectory = null;//Path where user account JSON files are saved.
+        File[] files = null;//Array of user account JSON files.
         int numberOfFiles = 0;//Current number of files in uploadDirectory.
-        boolean indexed = false;
-        String filePath = "";
-        int j = 0;
+        boolean requested = false;//requested values true when an index request has been correctly requested to Google API.
+        String filePath = "";//String variable used to iterate each file path.
+        int j = 0;//While counter.
 
-        //Files, while, launch command, process output:
+        for (int i = 0; i < indexRequestArrayList.size(); i++) {//For each not indexed index request:
+            indexRequestIterated = indexRequestArrayList.get(i);//indexRequestIterated updates.
+            uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();//uploadDirectory values path where this user account JSON files are saved.
+            files = new File(uploadDirectory).listFiles();//files updates with current uploadDirectory.
 
-        for (int i = 0; i < indexRequestArrayList.size(); i++) {
-            indexRequestIterated = indexRequestArrayList.get(i);
-            uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();
-            files = new File(uploadDirectory).listFiles();
-
-            if (files == null) {
+            if (files == null) {//If there are no files:
                 System.out.println("No files");
-            } else {
-                while (j < files.length && !indexed) {
-                    filePath = files[j].getAbsolutePath().replace('\\', '/');
+            } else {//If there are files:
+                while (j < files.length && !requested) {//While the index request hasn't been requested to Google, and we haven't passed array limits:
+                    filePath = files[j].getAbsolutePath().replace('\\', '/');//filePath updates with current JSON file.
                     command = "cmd.exe /c C:/Users/jesus/AppData/Roaming/npm/gis.cmd " +
                             indexRequestIterated.getUrl() + " " +
                             "--path " +
-                            filePath;
+                            filePath;//command updates with current index request URL and file path.
                     try {
                         if (!isWindows) {//If OS isn't Windows:
                             //Linux code missing...
                         } else {//If OS is Windows:
                             output = execCmd(command);//output values the console output of the given command.
                         }
-                        System.out.println(command);
+                        System.out.println(command);//We print command.
                         System.out.println(output);//We print output.
-                        if (output.contains("Indexing requested successfully")) {
-                            indexed = true;
-                            indexRequestIterated.setStatus(Status.INDEXED);
+                        if (output.contains("Indexing requested successfully")) {//This remains to be verified:
+                            requested = true;
+                            //Change status missing.
                         }
                     } catch (IOException e) {//If there was an IOException:
                         System.out.println(e.getMessage());//We print the error message.
                     }
-                    j++;
+                    j++;//The counter increments.
                 }
             }
         }
-
     }
 
     //Based on source: https://stackoverflow.com/questions/5711084/java-runtime-getruntime-getting-output-from-executing-a-command-line-program
