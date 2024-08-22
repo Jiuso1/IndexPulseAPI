@@ -56,30 +56,39 @@ public class IndexApiController {
 
         for (int i = 0; i < indexRequestArrayList.size(); i++) {//For each not indexed index request:
             indexRequestIterated = indexRequestArrayList.get(i);//indexRequestIterated updates.
-            uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();//uploadDirectory values path where this user account JSON files are saved.
+            uploadDirectory = "";//uploadDirectory values path where this user account JSON files are saved.
+
+            if (!isWindows) {//If OS isn't Windows:
+                uploadDirectory = "/services/data/uploadExample/" + indexRequestIterated.getUserAccountId();
+            } else {//If OS is Windows:
+                uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();
+            }
+
             files = new File(uploadDirectory).listFiles();//files updates with current uploadDirectory.
 
             if (files == null) {//If there are no files:
                 System.out.println("No files");
             } else {//If there are files:
+                j = 0;//We reset the counter.
                 while (j < files.length && !requested) {//While the index request hasn't been requested to Google, and we haven't passed array limits:
-                    filePath = files[j].getAbsolutePath().replace('\\', '/');//filePath updates with current JSON file.
-                    command = "cmd.exe /c C:/Users/jesus/AppData/Roaming/npm/gis.cmd " +
-                            indexRequestIterated.getUrl() + " " +
-                            "--path " +
-                            filePath;//command updates with current index request URL and file path.
                     try {
                         if (!isWindows) {//If OS isn't Windows:
-                            //Linux code missing...
+                            filePath = files[j].getAbsolutePath();//filePath updates with current JSON file.
+                            command = "gis " +
+                                    indexRequestIterated.getUrl() + " " +
+                                    "--path " +
+                                    filePath;//command updates with current index request URL and file path.
+                            output = execCmd(command);//output values the console output of the given command.
                         } else {//If OS is Windows:
+                            filePath = files[j].getAbsolutePath().replace('\\', '/');//filePath updates with current JSON file.
+                            command = "cmd.exe /c C:/Users/jesus/AppData/Roaming/npm/gis.cmd " +
+                                    indexRequestIterated.getUrl() + " " +
+                                    "--path " +
+                                    filePath;//command updates with current index request URL and file path.
                             output = execCmd(command);//output values the console output of the given command.
                         }
                         System.out.println(command);//We print command.
                         System.out.println(output);//We print output.
-                        if (output.contains("Indexing requested successfully")) {//This remains to be verified:
-                            requested = true;
-                            //Change status missing.
-                        }
                     } catch (IOException e) {//If there was an IOException:
                         System.out.println(e.getMessage());//We print the error message.
                     }
