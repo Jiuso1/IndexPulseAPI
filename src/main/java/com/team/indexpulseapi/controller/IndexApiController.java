@@ -59,7 +59,7 @@ public class IndexApiController {
             uploadDirectory = "";//uploadDirectory values path where this user account JSON files are saved.
 
             if (!isWindows) {//If OS isn't Windows:
-                uploadDirectory = "/services/data/uploadExample/" + indexRequestIterated.getUserAccountId();
+                uploadDirectory = "~/services/data/uploadExample/" + indexRequestIterated.getUserAccountId();
             } else {//If OS is Windows:
                 uploadDirectory = "C:/Users/jesus/Downloads/uploadExample/" + indexRequestIterated.getUserAccountId();
             }
